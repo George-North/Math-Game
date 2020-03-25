@@ -6,11 +6,30 @@ import time
 class main_window():
     def __init__(self):
         self.main_menu()
+        
+        #Styles for the menu options
+        butt_style = ttk.Style()
+        butt_style.configure("big.TButton", font=("Arial", 25, "bold"))
+
+        extra_big_field = ttk.Style()
+        extra_big_field.configure("extra_big.TEntry", font=("Arial", 45))
+
+        drop_style = ttk.Style()
+        drop_style.configure("big.TMenubutton", font=("Arial", 10, "bold"))
+
+        check_style = ttk.Style()
+        check_style.configure("bg.TCheckbutton", background="#2c3f85", foreground="white", font=("Arial",11,"bold"))
 
     def main_menu(self):
         try:        #Clear the other sections if they exist
             self.instructions.grid_forget()
+        except AttributeError:  #Stops the error message being printed
+            pass
+        try:
             self.highscores.grid_forget()
+        except AttributeError:  #Stops the error message being printed
+            pass
+        try:
             self.basic_facts.grid_forget()
         except AttributeError:  #Stops the error message being printed
             pass
@@ -23,16 +42,6 @@ class main_window():
             self.menu.grid_columnconfigure(1,weight=1)
             Label(self.menu, text="George's 100 Basic Facts", bg="#2c3f85", fg="white", font="Bahnschrift 25 bold").grid(row=0, column=0, columnspan=2, pady=15)
 
-
-            #Styles for the menu options
-            butt_style = ttk.Style()
-            butt_style.configure("big.TButton", font=("Arial", 25, "bold"))
-
-            drop_style = ttk.Style()
-            drop_style.configure("big.TMenubutton", font=("Arial", 10, "bold"))
-
-            check_style = ttk.Style()
-            check_style.configure("bg.TCheckbutton", background="#2c3f85", foreground="white", font=("Arial",11,"bold"))
 
             #Start and highscore buttons
             self.Start_Button = ttk.Button(self.menu, text="Start", command=lambda:self.play(), width=7, style="big.TButton")
@@ -70,36 +79,51 @@ class main_window():
             self.Start_Button.config(state=NORMAL)
 
     def show_instructions(self):
-        try:        #Clear the other sections if they exist
+        try:        #Clear the other menu if it exists
             self.menu.grid_forget()
-            self.highscores.grid_forget()
-            self.basic_facts.grid_forget()
         except AttributeError:  #Stops the error message being printed
             pass
         finally:
             pass
         
     def play(self):
-        try:        #Clear the other sections if they exist
-            self.instructions.grid_forget()
-            self.highscores.grid_forget()
+        try:        #Clear the other menu if it exists
             self.menu.grid_forget()
         except AttributeError:  #Stops the error message being printed
             pass
         finally:
             generate_problems(self.difficulty_value.get(), self.add_var.get(), self.sub_var.get(), self.mult_var.get(), self.div_var.get())
+
+            self.basic_facts = Frame(window, width=390, height=390, bg="#86e0dd")
+            self.basic_facts.grid(row=0,column=0,padx=5,pady=5)
+            self.basic_facts.grid_propagate(False)
+            self.basic_facts.grid_columnconfigure(0,weight=1)
+            self.basic_facts.grid_columnconfigure(1,weight=1)
+            self.basic_facts.grid_columnconfigure(2,weight=1)
+            self.basic_facts.grid_rowconfigure(0,weight=1)
+            self.basic_facts.grid_rowconfigure(1,weight=1)
+            self.basic_facts.grid_rowconfigure(2,weight=1)
+
+            question_var.set("Hello")
+
+
+            Label(self.basic_facts, textvariable=question_var, bg="#86e0dd", fg="black", font=("Arial", 65, "bold")).grid(row=0,column=1)
+            self.answer_box = ttk.Entry(self.basic_facts, textvariable=answer, style="extra_big.TEntry", font=("Arial",20)).grid(row=1,column=1)
+
             
     def show_highscores(self):
-        try:        #Clear the other sections if they exist
-            self.instructions.grid_forget()
+        try:        #Clear the other menu if it exists
             self.menu.grid_forget()
-            self.basic_facts.grid_forget()
         except AttributeError:  #Stops the error message being printed
             pass
         finally:
             pass
 
-def generate_problems(difficulty="Medium", add=True, sub=True, mult=True, div=True):
+def next_question():
+    pass
+
+
+def generate_problems(difficulty="Medium", add=True, sub=True, mult=True, div=True):        #Generates problems according to the formula laid out in Problem Difficulty Explanation.xlsx
     selected_functions=[]
     if difficulty == "Difficulty": difficulty = "Medium"
     selected_functions.clear()
@@ -170,16 +194,14 @@ def generate_problems(difficulty="Medium", add=True, sub=True, mult=True, div=Tr
             num_2 = rnd.randint(2,12)
             full_problem = str(num_1*num_2) + " ÷ " + str(num_1)
             problem_list.append(full_problem)
-            
-    for i in problem_list:
-        print(i + "\n")    
-    
 
 #Accuracy/Time
 #Or perhaps dock time
+            
+window = Tk()
 
 problem_list=[]
+question_var = StringVar()
+answer = StringVar()
 
-
-window = Tk()
 main_window()
