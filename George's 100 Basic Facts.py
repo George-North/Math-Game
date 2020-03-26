@@ -97,15 +97,16 @@ class main_window():
             self.basic_facts = Frame(window, width=390, height=390, bg="#86e0dd")
             self.basic_facts.grid(row=0,column=0,padx=5,pady=5)
             self.basic_facts.grid_propagate(False)
-            self.basic_facts.grid_columnconfigure(0,weight=1)
-            self.basic_facts.grid_columnconfigure(1,weight=1)
-            self.basic_facts.grid_columnconfigure(2,weight=1)
-            self.basic_facts.grid_rowconfigure(0,weight=1)
-            self.basic_facts.grid_rowconfigure(1,weight=1)
-            self.basic_facts.grid_rowconfigure(2,weight=1)
+            for i in range(3):
+                self.basic_facts.grid_columnconfigure(i,weight=1)
+                self.basic_facts.grid_rowconfigure(i,weight=1)
+            window.bind("<Return>", self.next_question())   #Todo
 
-            question_var.set("Hello")
-
+            run = True
+            question_number=0
+            answer_list.clear()
+            question_var = problem_list[question_number]
+            print(problem_list[question_number])
 
             Label(self.basic_facts, textvariable=question_var, bg="#86e0dd", fg="black", font=("Arial", 65, "bold")).grid(row=0,column=1)
             self.answer_box = ttk.Entry(self.basic_facts, textvariable=answer, style="extra_big.TEntry", font=("Arial",20)).grid(row=1,column=1)
@@ -119,8 +120,15 @@ class main_window():
         finally:
             pass
 
-def next_question():
-    pass
+    def next_question(self):
+        global run
+        if run:
+            print("next_question")
+            if self.answer_box.get() != None:
+                question_var = problem_list[question_number]
+                answer_list.append(self.answer_box.get())
+                self.answer_box.set(None)
+                question_number += 1
 
 
 def generate_problems(difficulty="Medium", add=True, sub=True, mult=True, div=True):        #Generates problems according to the formula laid out in Problem Difficulty Explanation.xlsx
@@ -201,7 +209,10 @@ def generate_problems(difficulty="Medium", add=True, sub=True, mult=True, div=Tr
 window = Tk()
 
 problem_list=[]
+answer_list=[]
 question_var = StringVar()
 answer = StringVar()
+question_number = 0
+run = False
 
 main_window()
