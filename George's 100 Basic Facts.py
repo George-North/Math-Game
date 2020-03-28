@@ -27,7 +27,7 @@ class main_window():
         except AttributeError:  #Stops the error message being printed
             pass
         try:
-            self.highscores.grid_forget()
+            self.highscore_page.grid_forget()
         except AttributeError:  #Stops the error message being printed
             pass
         try:
@@ -44,10 +44,10 @@ class main_window():
 
 
             #Start and highscore buttons
-            self.Start_Button = ttk.Button(self.menu, text="Start", command=lambda:self.play(), width=7, style="big.TButton")
+            self.Start_Button = ttk.Button(self.menu, text="Start", command=self.play, width=7, style="big.TButton")
             self.Start_Button.grid(row=1,column=0,pady=25)
-            ttk.Button(self.menu, text="Highscores", command=lambda:self.show_highscores(), style="normal.TButton").grid(row=1,column=1,pady=25)
-            ttk.Button(self.menu, text="Instructions", command=lambda:self.show_instructions(), style="normal.TButton").grid(row=2,column=1,pady=25)
+            ttk.Button(self.menu, text="Highscores", command=self.show_highscores, style="normal.TButton").grid(row=1,column=1,pady=25)
+            ttk.Button(self.menu, text="Instructions", command=self.show_instructions, style="normal.TButton").grid(row=2,column=1,pady=25)
 
             #Difficulty Dropdown
             self.difficulty_value = StringVar()
@@ -55,7 +55,7 @@ class main_window():
             self.difficulty.config(width=10)
             self.difficulty.grid(row=2,column=0,pady=25)
 
-            #Checkbuttons to selection functions
+            #Checkbuttons to select functions
             self.add_var = BooleanVar(value=True)
             self.add = ttk.Checkbutton(self.menu, variable=self.add_var, command=self.an_option, width=13, style="bg.TCheckbutton", text="Addition")
             self.add.grid(row=3,column=0,pady=25)
@@ -87,6 +87,7 @@ class main_window():
             pass
         
     def play(self): #Where the user can answer questions
+        global question_number
         global start_time
         try:        #Clear the other menu if it exists
             self.menu.grid_forget()
@@ -108,7 +109,6 @@ class main_window():
 
             question_number=0
             user_answer_list.clear()
-            print(problem_list)
             question_var.set(problem_list[question_number])
             
             window.bind("<Return>", self.next_question)
@@ -120,11 +120,11 @@ class main_window():
             self.answer_box.grid(row=1,column=1)
             
             start_time = t.time()
-            print("Start: " + str(t.time()))
 
     def results(self):  #Shows the results
         global duration
         global question_number
+        global score
         duration = t.time() - start_time
         self.basic_facts.grid_forget()
         self.results_page = Frame(window, width=490, height=490, bg="#6b6b6b")
@@ -148,7 +148,7 @@ class main_window():
         self.output_box.insert("end", "Question         Your Answer         Correct Answer\n")
 
         self.output_box.configure(state="normal")
-
+        
         for i in range(len(user_answer_list)):
             x = user_answer_list[i]         #Sure wish I knew why I had to do it this way
             y = correct_answer_list[i]
@@ -164,10 +164,10 @@ class main_window():
         header = str("You Got: " + str(score) + "/100 in " + str(round(duration, 1)) + "s")
         Label(self.results_page, text=header, bg="#6b6b6b", fg="white", font="Bahnschrift 25 bold").grid(row=0, column=0, columnspan=3, pady=10)
         
-        ttk.Button(self.results_page, text="Save Results", command=lambda:self.save_results()).grid(row=0,column=4,pady=15, padx=(0,12))
-        ttk.Button(self.results_page, text="Play Again", command=lambda:self.play()).grid(row=1,column=4,pady=15, padx=(0,12))
-        ttk.Button(self.results_page, text="Highscores", command=lambda:self.show_highscores()).grid(row=2,column=4,pady=15, padx=(0,12))
-        ttk.Button(self.results_page, text="Main Menu", command=lambda:self.main_menu()).grid(row=3,column=4,pady=15, padx=(0,12))
+        ttk.Button(self.results_page, text="Save Results", command=self.save_results).grid(row=0,column=4,pady=15, padx=(0,12))
+        ttk.Button(self.results_page, text="Play Again", command=self.play).grid(row=1,column=4,pady=15, padx=(0,12))
+        ttk.Button(self.results_page, text="Highscores", command=self.show_highscores).grid(row=2,column=4,pady=15, padx=(0,12))
+        ttk.Button(self.results_page, text="Main Menu", command=self.main_menu).grid(row=3,column=4,pady=15, padx=(0,12))
                 
     def save_results(self):
         self.results_page.grid_forget()
@@ -196,16 +196,15 @@ class main_window():
     def save(self,char1,char2,char3):        #Write to the file and take the user to the main menu
         name = char1 + char2 + char3
         if char1 != "" and char2 != "" and char3 != "":
-            print("name: " + name)
-            print("duration: " + str(duration))
-            print("time: " + str(t.time()))
-            print("start_time: " + str(start_time))
+            val = round(calc_score(),2)
             with open("Highscores.txt", "r+") as highscore_file:
                 for line in highscore_file:
                     highscore_list.append(line)        
                 highscore_file.truncate(0)  #Wipes the file
                 highscore_file.seek(0)      #Resets the write head to the start of the file
-                l = str(score) + "," + str(round(duration, 2)) + "," + name + "," + str(self.difficulty_value.get()) + "," + str(self.add_var.get()) + "," + str(self.sub_var.get()) + "," + str(self.mult_var.get()) + "," + str(self.div_var.get()) + "\n"
+                difficulty = self.difficulty_value.get()
+                if difficulty == "Difficulty": difficulty = "Medium"
+                l = str(val) + "," + name + "," + str(difficulty) + "," + str(self.add_var.get()) + "," + str(self.sub_var.get()) + "," + str(self.mult_var.get()) + "," + str(self.div_var.get()) + "\n"
                 highscore_list.append(l)
                 for i in highscore_list:
                     highscore_file.write(i)
@@ -218,24 +217,92 @@ class main_window():
             self.menu.grid_forget()
         except AttributeError:  #Stops the error message being printed
             pass
-        finally:
+        try:        #Clear the other menu if it exists
+            self.results_page.grid_forget()
+        except AttributeError:  #Stops the error message being printed
             pass
+        
+        finally:
+            self.highscore_page = Frame(window, bg="#32cd32", width=490, height=490)
+            self.highscore_page.grid(row=0,column=0,pady=5,padx=5)
 
-    def next_question(self,event):  #Changes the question, writes the result, and clears the entry
+            for i in range(4):
+                self.highscore_page.grid_columnconfigure(i,weight=1)
+            for i in range(5):
+                self.highscore_page.grid_rowconfigure(i,weight=1)
+            self.highscore_page.grid_propagate(False)
+
+            
+            Label(self.highscore_page, text="Highscores", font="Bahnschrift 30 bold", bg="#32cd32").grid(row=0,column=0,columnspan=2)
+            ttk.Button(self.highscore_page, text="Main Menu", command=self.main_menu).grid(row=0,column=2)
+
+            #Difficulty Dropdown
+            self.highscore_difficulty_value = StringVar()
+            self.highscore_difficulty = ttk.OptionMenu(self.highscore_page, self.highscore_difficulty_value, "Difficulty","Easy","Medium","Hard","Expert", command=self.search_highscores)
+            self.highscore_difficulty.config(width=10)
+            self.highscore_difficulty.grid(row=0,column=3)
+
+            #Checkbuttons to select functions
+            self.highscore_add_var = BooleanVar(value=True)
+            self.highscore_add = ttk.Checkbutton(self.highscore_page, variable=self.add_var, width=13, command=self.search_highscores, text="Addition")
+            self.highscore_add.grid(row=1,column=3)
+                
+            self.highscore_sub_var = BooleanVar(value=True)
+            self.highscore_subtract = ttk.Checkbutton(self.highscore_page, variable=self.sub_var, width=13, command=self.search_highscores, text="Subtraction")
+            self.highscore_subtract.grid(row=2,column=3)
+                
+            self.highscore_mult_var = BooleanVar(value=True)
+            self.highscore_multiply = ttk.Checkbutton(self.highscore_page, variable=self.mult_var, width=13, command=self.search_highscores, text="Multiplication")
+            self.highscore_multiply.grid(row=3,column=3)
+                
+            self.highscore_div_var = BooleanVar(value=True)
+            self.highscore_divide = ttk.Checkbutton(self.highscore_page, variable=self.div_var, width=13, command=self.search_highscores, text="Division")
+            self.highscore_divide.grid(row=4,column=3)
+
+            self.highscore_output_box=scrolledtext.ScrolledText(self.highscore_page,height=20,width=40,font="Arial 12 bold")
+            self.highscore_output_box.grid(row=1, column=0, columnspan=3, rowspan=4)
+
+            self.search_highscores()
+        
+    def next_question(self):  #Changes the question, writes the result, and clears the entry
         global question_number
         if self.answer_box.get() != "":
             user_answer_list.append(int(self.answer_box.get()))
             self.answer_box.delete(0, 'end')
             question_number += 1
             if question_number != len(correct_answer_list):
-                print("question_number" + str(question_number))
-                print("problem_list" + str(problem_list))
-                print("problem_list[question_number]: " + str(problem_list[question_number]))
                 question_var.set(problem_list[question_number])
             elif question_number == len(correct_answer_list):
                 window.unbind("<Return>")
                 self.results()
-                
+
+    def search_highscores(self, val=None):  #Iterates through the highscore file and then writes all the matching ones to the file 
+        difficulty = str(self.highscore_difficulty_value.get())
+        if difficulty == "Difficulty": difficulty = "Medium"
+
+        self.highscore_output_box.configure(state="normal")
+        self.highscore_output_box.delete(1.0, 'end')
+        current_highscore_list.clear()
+
+        with open("Highscores.txt") as highscore_file:
+            for line in highscore_file:
+                line = line.rstrip()
+                line = line.split(",")
+                if str(line[2]) == difficulty and str(line[3]) == str(self.highscore_add_var.get()) and str(line[4]) == str(self.highscore_sub_var.get()) and str(line[5]) == str(self.highscore_mult_var.get()) and str(line[6]) == str(self.highscore_div_var.get()):
+                    x=[]
+                    x.clear()
+                    x.append(line[0])
+                    y = ("                              " + str(line[1]) + "\n")
+                    x.append(y)
+                    current_highscore_list.append(x)
+        current_highscore_list.sort(key= lambda x: x[0], reverse=True)    #Sorts the lists according to the first item of them                #Not lists tho ------------------------- Todo
+        for i in current_highscore_list:
+            self.highscore_output_box.insert("end", i[0])
+            self.highscore_output_box.insert("end", i[1])
+
+        self.highscore_output_box.configure(state="disabled")
+
+            
 def is_num(in_string,action_type):  #Checks that the user only enters numbers
     if action_type == '1': #insert
         if not in_string.isdigit():
@@ -251,6 +318,11 @@ def one_char(in_string, action_type):    #Checks the the user only enters one al
         else:
             return False
     return True
+
+def calc_score():
+    global score
+    global duration
+    return score/duration
 
 def generate_problems(difficulty="Medium", add=True, sub=True, mult=True, div=True):        #Generates problems according to the formula laid out in Problem Difficulty Explanation.xlsx
     selected_functions=[]
@@ -331,10 +403,10 @@ def generate_problems(difficulty="Medium", add=True, sub=True, mult=True, div=Tr
             correct_answer_list.append(int((num_1*num_2)/num_1))
 
 #Accuracy/Time
-#Or perhaps dock time
             
 window = Tk()
 
+current_highscore_list=[]
 highscore_list=[]
 problem_list=[]
 user_answer_list=[]
