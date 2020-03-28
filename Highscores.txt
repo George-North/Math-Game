@@ -1,0 +1,2 @@
+0,2.91,1Ab,Difficulty,True,True,True,True
+0,3.76,2Ba,Difficulty,False,True,True,False
