@@ -21,6 +21,9 @@ class main_window():
         check_style = ttk.Style()
         check_style.configure("bg.TCheckbutton", background="#2c3f85", foreground="white", font=("Arial",14,"bold"))
 
+        green_check_style = ttk.Style()
+        green_check_style.configure("green_bg.TCheckbutton", background="#32cd32", font=("Arial", 11, "bold"))
+
     def main_menu(self):    #Make the Menu
         try:        #Clear the other sections if they exist
             self.instructions.grid_forget()
@@ -244,27 +247,27 @@ class main_window():
 
             #Checkbuttons to select functions
             self.highscore_add_var = BooleanVar(value=True)
-            self.highscore_add = ttk.Checkbutton(self.highscore_page, variable=self.add_var, width=13, command=self.search_highscores, text="Addition")
+            self.highscore_add = ttk.Checkbutton(self.highscore_page, variable=self.highscore_add_var, width=13, command=self.search_highscores, text="Addition", style="green_bg.TCheckbutton")
             self.highscore_add.grid(row=1,column=3)
                 
             self.highscore_sub_var = BooleanVar(value=True)
-            self.highscore_subtract = ttk.Checkbutton(self.highscore_page, variable=self.sub_var, width=13, command=self.search_highscores, text="Subtraction")
+            self.highscore_subtract = ttk.Checkbutton(self.highscore_page, variable=self.highscore_sub_var, width=13, command=self.search_highscores, text="Subtraction", style="green_bg.TCheckbutton")
             self.highscore_subtract.grid(row=2,column=3)
                 
             self.highscore_mult_var = BooleanVar(value=True)
-            self.highscore_multiply = ttk.Checkbutton(self.highscore_page, variable=self.mult_var, width=13, command=self.search_highscores, text="Multiplication")
+            self.highscore_multiply = ttk.Checkbutton(self.highscore_page, variable=self.highscore_mult_var, width=13, command=self.search_highscores, text="Multiplication", style="green_bg.TCheckbutton")
             self.highscore_multiply.grid(row=3,column=3)
                 
             self.highscore_div_var = BooleanVar(value=True)
-            self.highscore_divide = ttk.Checkbutton(self.highscore_page, variable=self.div_var, width=13, command=self.search_highscores, text="Division")
+            self.highscore_divide = ttk.Checkbutton(self.highscore_page, variable=self.highscore_div_var, width=13, command=self.search_highscores, text="Division", style="green_bg.TCheckbutton")
             self.highscore_divide.grid(row=4,column=3)
 
-            self.highscore_output_box=scrolledtext.ScrolledText(self.highscore_page,height=20,width=40,font="Arial 12 bold")
+            self.highscore_output_box=scrolledtext.ScrolledText(self.highscore_page,height=8,width=15,font="Arial 30 bold")
             self.highscore_output_box.grid(row=1, column=0, columnspan=3, rowspan=4)
 
             self.search_highscores()
         
-    def next_question(self):  #Changes the question, writes the result, and clears the entry
+    def next_question(self,event=None):  #Changes the question, writes the result, and clears the entry
         global question_number
         if self.answer_box.get() != "":
             user_answer_list.append(int(self.answer_box.get()))
@@ -292,7 +295,7 @@ class main_window():
                     x=[]
                     x.clear()
                     x.append(line[0])
-                    y = ("                              " + str(line[1]) + "\n")
+                    y = ("               " + str(line[1]) + "\n")
                     x.append(y)
                     current_highscore_list.append(x)
         current_highscore_list.sort(key= lambda x: x[0], reverse=True)    #Sorts the lists according to the first item of them                #Not lists tho ------------------------- Todo
