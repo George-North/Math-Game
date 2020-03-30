@@ -38,52 +38,46 @@ class main_window():
         except AttributeError:  #Stops the error message being printed
             pass
         finally:        
-            self.menu = Frame(window, width=490, height=490, bg="#2c3f85")
-            self.menu.grid(row=0,column=0,padx=5,pady=5)
-            self.menu.grid_propagate(False)
-            self.menu.grid_columnconfigure(0,weight=1)
-            self.menu.grid_columnconfigure(1,weight=1)
-            Label(self.menu, text="George's 100 Basic Facts", bg="#2c3f85", fg="white", font="Bahnschrift 30 bold").grid(row=0, column=0, columnspan=2, pady=25)
+            self.menu_page = Frame(window, width=490, height=490, bg="#2c3f85")
+            self.menu_page.grid(row=0,column=0,padx=5,pady=5)
+            self.menu_page.grid_propagate(False)
+            self.menu_page.grid_columnconfigure(0,weight=1)
+            self.menu_page.grid_columnconfigure(1,weight=1)
+            Label(self.menu_page, text="George's 100 Basic Facts", bg="#2c3f85", fg="white", font="Bahnschrift 30 bold").grid(row=0, column=0, columnspan=2, pady=25)
 
 
             #Start and highscore buttons
-            self.Start_Button = ttk.Button(self.menu, text="Start", command=self.play, width=7, style="big.TButton")
+            self.Start_Button = ttk.Button(self.menu_page, text="Start", command=self.play, width=7, style="big.TButton")
             self.Start_Button.grid(row=1,column=0,pady=25)
-            ttk.Button(self.menu, text="Highscores", command=self.show_highscores, style="normal.TButton").grid(row=1,column=1,pady=25)
-            ttk.Button(self.menu, text="Instructions", command=self.show_instructions, style="normal.TButton").grid(row=2,column=1,pady=25)
+            ttk.Button(self.menu_page, text="Highscores", command=self.show_highscores, style="normal.TButton").grid(row=1,column=1,pady=25)
+            ttk.Button(self.menu_page, text="Instructions", command=self.show_instructions, style="normal.TButton").grid(row=2,column=1,pady=25)
 
             #Difficulty Dropdown
             self.difficulty_value = StringVar()
-            self.difficulty = ttk.OptionMenu(self.menu, self.difficulty_value, "Difficulty","Easy","Medium","Hard","Expert", style="big.TMenubutton")
+            self.difficulty = ttk.OptionMenu(self.menu_page, self.difficulty_value, "Difficulty","Easy","Medium","Hard","Expert", style="big.TMenubutton")
             self.difficulty.config(width=10)
             self.difficulty.grid(row=2,column=0,pady=25)
 
             #Checkbuttons to select functions
             self.add_var = BooleanVar(value=True)
-            self.add = ttk.Checkbutton(self.menu, variable=self.add_var, command=self.an_option, width=13, style="bg.TCheckbutton", text="Addition")
+            self.add = ttk.Checkbutton(self.menu_page, variable=self.add_var, command=self.an_option, width=13, style="bg.TCheckbutton", text="Addition")
             self.add.grid(row=3,column=0,pady=25)
             
             self.sub_var = BooleanVar(value=True)
-            self.subtract = ttk.Checkbutton(self.menu, variable=self.sub_var, command=self.an_option, width=13, style="bg.TCheckbutton", text="Subtraction")
+            self.subtract = ttk.Checkbutton(self.menu_page, variable=self.sub_var, command=self.an_option, width=13, style="bg.TCheckbutton", text="Subtraction")
             self.subtract.grid(row=4,column=0,pady=25)
             
             self.mult_var = BooleanVar(value=True)
-            self.multiply = ttk.Checkbutton(self.menu, variable=self.mult_var, command=self.an_option, width=13, style="bg.TCheckbutton", text="Multiplication")
+            self.multiply = ttk.Checkbutton(self.menu_page, variable=self.mult_var, command=self.an_option, width=13, style="bg.TCheckbutton", text="Multiplication")
             self.multiply.grid(row=3,column=1,pady=25)
             
             self.div_var = BooleanVar(value=True)
-            self.divide = ttk.Checkbutton(self.menu, variable=self.div_var, command=self.an_option, width=13, style="bg.TCheckbutton", text="Division")
+            self.divide = ttk.Checkbutton(self.menu_page, variable=self.div_var, command=self.an_option, width=13, style="bg.TCheckbutton", text="Division")
             self.divide.grid(row=4,column=1,pady=25)
-
-    def an_option(self):    #Only allows the user to start if they have selected at least one operation
-        if self.add_var.get()==False and self.sub_var.get()==False and self.mult_var.get()==False and self.div_var.get()==False:
-            self.Start_Button.config(state=DISABLED)
-        else:
-            self.Start_Button.config(state=NORMAL)
 
     def show_instructions(self):    #Explains how to play
         try:        #Clear the other menu if it exists
-            self.menu.grid_forget()
+            self.menu_page.grid_forget()
         except AttributeError:  #Stops the error message being printed
             pass
         finally:
@@ -98,7 +92,7 @@ class main_window():
         global question_number
         global start_time
         try:        #Clear the other menu if it exists
-            self.menu.grid_forget()
+            self.menu_page.grid_forget()
         except AttributeError:  #Stops the error message being printed
             pass
         try:        #Clear the other menu if it exists
@@ -177,7 +171,7 @@ class main_window():
         ttk.Button(self.results_page, text="Highscores", command=self.show_highscores).grid(row=2,column=4,pady=15, padx=(0,12))
         ttk.Button(self.results_page, text="Main Menu", command=self.main_menu).grid(row=3,column=4,pady=15, padx=(0,12))
                 
-    def save_results(self):
+    def save_results(self):     #Allows the user to save their initials to the highscore
         self.results_page.grid_forget()
         self.save_page = Frame(window, width=490, height=490, bg="#f4732e")
         self.save_page.grid(row=0,column=0, padx=5, pady=5)
@@ -200,6 +194,13 @@ class main_window():
         self.box_3['validatecommand'] = (self.box_3.register(one_char),'%P','%d')
 
         ttk.Button(self.save_page, text="Save", command=lambda:self.save(self.box_1.get(), self.box_2.get(), self.box_3.get()), style="big.TButton").grid(row=2,column=1) 
+        ttk.Button(self.results_page, text="Main Menu", command=self.main_menu).grid(row=3,column=2,pady=15)
+
+    def an_option(self):    #Only allows the user to start if they have selected at least one operation
+        if self.add_var.get()==False and self.sub_var.get()==False and self.mult_var.get()==False and self.div_var.get()==False:
+            self.Start_Button.config(state=DISABLED)
+        else:
+            self.Start_Button.config(state=NORMAL)
 
     def save(self,char1,char2,char3):        #Write to the file and take the user to the main menu
         name = char1 + char2 + char3
@@ -222,7 +223,7 @@ class main_window():
             
     def show_highscores(self):
         try:        #Clear the other menu if it exists
-            self.menu.grid_forget()
+            self.menu_page.grid_forget()
         except AttributeError:  #Stops the error message being printed
             pass
         try:        #Clear the other menu if it exists
@@ -300,7 +301,7 @@ class main_window():
                     x=[]
                     x.clear()
                     x.append(line[0])
-                    y = ("               " + str(line[1]) + "\n")
+                    y = ("             " + str(line[1]) + "\n")
                     x.append(y)
                     current_highscore_list.append(x)
         current_highscore_list.sort(key= lambda x: x[0], reverse=True)    #Sorts the lists according to the first item of them                #Not lists tho ------------------------- Todo

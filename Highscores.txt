@@ -1,3 +1,8 @@
 1.32,1Ab,Medium,True,True,True,True
 1.44,2Ba,Medium,False,True,True,False
 0.22,agv,Medium,True,True,True,True
+0.39,GDN,Medium,True,True,True,True
+0.60,GDN,Easy,True,True,True,True
+0.42,GDN,Medium,True,True,True,True
+0.32,GDN,Expert,False,True,False,True
+0.58,GDN,Medium,True,True,False,False
