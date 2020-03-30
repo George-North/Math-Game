@@ -87,7 +87,12 @@ class main_window():
         except AttributeError:  #Stops the error message being printed
             pass
         finally:
-            pass
+            self.instructions_page = Frame(window, bg="#8009bc", width=490, height=490)
+            self.instructions_page.grid(row=0,column=0,pady=5,padx=5)
+            self.instructions_page.grid_propagate(False)
+
+            Label(self.instructions_page, text=instruction_text, bg="#8009bc", fg="white", justify=LEFT, font=("Arial", 16, "bold"), wraplength=480).grid(row=0,column=0, pady=5,padx=5)
+            ttk.Button(self.instructions_page, command=self.main_menu, text="Main Menu").grid(row=1,column=0, pady=25)
         
     def play(self): #Where the user can answer questions
         global question_number
@@ -423,8 +428,9 @@ question_number = 0
 start_time = 0
 duration = 0
 score = 0
-window.geometry("500x500+2000+20")
+window.geometry("500x500")
 window.title("George's 100 Basic Facts")
-NUM_QUESTIONS=3
+instruction_text = "Welcome to George's 100 Basic Facts. \n On the main menu you can select what operations (addition, subtraction, multiplication, division) you want to practice, and what difficulty you want the questions to be. \n Once you're ready you can click start, and the first question will come up, and the timer will start. \n Put your answer in the box, and press enter to move to the next question. After 100 questions you can see your results, and save your resulta. \n The points are determined by the number of correct answers divided by how long it took. \n That's all you need to know, enjoy."
+NUM_QUESTIONS=100
 
 main_window()
