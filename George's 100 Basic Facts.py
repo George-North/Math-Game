@@ -38,11 +38,12 @@ class main_window():
         except AttributeError:  #Stops the error message being printed
             pass
         finally:        
-            self.menu_page = Frame(window, width=490, height=490, bg="#2c3f85")
+            self.menu_page = Frame(window, width=490, height=490, bg="#2c3f85")     #Lay out the background
             self.menu_page.grid(row=0,column=0,padx=5,pady=5)
-            self.menu_page.grid_propagate(False)
-            self.menu_page.grid_columnconfigure(0,weight=1)
+            self.menu_page.grid_propagate(False)                            #Fill the background so it doesn't stick tight to the widgets
+            self.menu_page.grid_columnconfigure(0,weight=1)                 #Evenly space the columns and rows
             self.menu_page.grid_columnconfigure(1,weight=1)
+
             Label(self.menu_page, text="George's 100 Basic Facts", bg="#2c3f85", fg="white", font="Bahnschrift 30 bold").grid(row=0, column=0, columnspan=2, pady=25)
 
 
@@ -81,12 +82,12 @@ class main_window():
         except AttributeError:  #Stops the error message being printed
             pass
         finally:
-            self.instructions_page = Frame(window, bg="#8009bc", width=490, height=490)
+            self.instructions_page = Frame(window, bg="#8009bc", width=490, height=490)     #Lay out the background
             self.instructions_page.grid(row=0,column=0,pady=5,padx=5)
-            self.instructions_page.grid_propagate(False)
+            self.instructions_page.grid_propagate(False)                            #Fill the background so it doesn't stick tight to the widgets
 
             Label(self.instructions_page, text=instruction_text, bg="#8009bc", fg="white", justify=LEFT, font=("Arial", 16, "bold"), wraplength=480).grid(row=0,column=0, pady=5,padx=5)
-            ttk.Button(self.instructions_page, command=self.main_menu, text="Main Menu").grid(row=1,column=0, pady=25)
+            ttk.Button(self.instructions_page, command=self.main_menu, text="Main Menu").grid(row=1,column=0, pady=25)      #Back to the main menu
         
     def play(self): #Where the user can answer questions
         global question_number
@@ -100,58 +101,59 @@ class main_window():
         except AttributeError:  #Stops the error message being printed
             pass
         finally:
-            generate_problems(self.difficulty_value.get(), self.add_var.get(), self.sub_var.get(), self.mult_var.get(), self.div_var.get())
+            generate_problems(self.difficulty_value.get(), self.add_var.get(), self.sub_var.get(), self.mult_var.get(), self.div_var.get())     #Make the problems
 
-            self.basic_facts = Frame(window, width=490, height=490, bg="#86e0dd")
+            self.basic_facts = Frame(window, width=490, height=490, bg="#86e0dd")     #Lay out the background
             self.basic_facts.grid(row=0,column=0,padx=5,pady=5)
-            self.basic_facts.grid_propagate(False)
+            self.basic_facts.grid_propagate(False)                            #Fill the background so it doesn't stick tight to the widgets
             for i in range(3):
-                self.basic_facts.grid_columnconfigure(i,weight=1)
+                self.basic_facts.grid_columnconfigure(i,weight=1)                 #Evenly space the columns and rows
                 self.basic_facts.grid_rowconfigure(i,weight=1)
-
-            question_number=0
+    
+            question_number=0                   #Reset the variables so the user can play multiple times
             user_answer_list.clear()
             question_var.set(problem_list[question_number])
             
-            window.bind("<Return>", self.next_question)
+            window.bind("<Return>", self.next_question)     #Allows the user to press enter to move to the next question
 
             self.question = Label(self.basic_facts, textvariable=question_var, bg="#86e0dd", fg="black", font=("Arial", 65, "bold"))
             self.question.grid(row=0,column=1)
             self.answer_box = ttk.Entry(self.basic_facts, textvariable=answer, font=("Arial 45"), width=10, validate="key")
-            self.answer_box['validatecommand'] = (self.answer_box.register(is_num),'%P','%d')
+            self.answer_box['validatecommand'] = (self.answer_box.register(is_num),'%P','%d')               #Only lets the user make approved (number) entries
             self.answer_box.grid(row=1,column=1)
             
-            start_time = t.time()
+            start_time = t.time()       #Gets the time now
 
     def results(self):  #Shows the results
         global duration
         global question_number
         global score
-        duration = t.time() - start_time
-        self.basic_facts.grid_forget()
-        self.results_page = Frame(window, width=490, height=490, bg="#6b6b6b")
+        duration = t.time() - start_time        #Calculates how long the user took
+        self.basic_facts.grid_forget()          #Clear the old window
+        self.results_page = Frame(window, width=490, height=490, bg="#6b6b6b")     #Lay out the background
         self.results_page.grid(row=0,column=0,padx=5,pady=5)
         for i in range(4):
-            self.results_page.grid_columnconfigure(i,weight=1)
+            self.results_page.grid_columnconfigure(i,weight=1)                 #Evenly space the columns and rows
         for i in range(5):
             self.results_page.grid_rowconfigure(i,weight=1)
-        self.results_page.grid_propagate(False)
+        self.results_page.grid_propagate(False)                            #Fill the background so it doesn't stick tight to the widgets
         score=0
 
         init1=""
         init2=""
         init3=""
 
-        self.output_box=scrolledtext.ScrolledText(self.results_page,height=20,width=40,font="Arial 12 bold")
+        self.output_box=scrolledtext.ScrolledText(self.results_page,height=20,width=40,font="Arial 12 bold")        #Makes a box so the user can look through their answers
         self.output_box.grid(row=1, column=0, columnspan=3, rowspan=3)
-        self.output_box.tag_config("Correct", background="green")
+        
+        self.output_box.tag_config("Correct", background="green")       #Colours the rows
         self.output_box.tag_config("Wrong", background="Red")
        
         self.output_box.insert("end", "Question         Your Answer         Correct Answer\n")
 
         self.output_box.configure(state="normal")
         
-        for i in range(len(user_answer_list)):
+        for i in range(len(user_answer_list)):      #Marks the answers
             x = user_answer_list[i]         #Sure wish I knew why I had to do it this way
             y = correct_answer_list[i]
             line = str(problem_list[i]) + "                              " + str(x) + "                            " + str(y) + "\n"
@@ -161,42 +163,42 @@ class main_window():
             else:
                 self.output_box.insert("end", line, "Wrong")
             
-        self.output_box.configure(state="disabled")
+        self.output_box.configure(state="disabled")         #Prevents the user editing the comments
                 
         header = str("You Got: " + str(score) + "/100 in " + str(round(duration, 1)) + "s")
         Label(self.results_page, text=header, bg="#6b6b6b", fg="white", font="Bahnschrift 25 bold").grid(row=0, column=0, columnspan=3, pady=10)
         
-        ttk.Button(self.results_page, text="Save Results", command=self.save_results).grid(row=0,column=4,pady=15, padx=(0,12))
+        ttk.Button(self.results_page, text="Save Results", command=self.save_results).grid(row=0,column=4,pady=15, padx=(0,12)) 
         ttk.Button(self.results_page, text="Play Again", command=self.play).grid(row=1,column=4,pady=15, padx=(0,12))
         ttk.Button(self.results_page, text="Highscores", command=self.show_highscores).grid(row=2,column=4,pady=15, padx=(0,12))
         ttk.Button(self.results_page, text="Main Menu", command=self.main_menu).grid(row=3,column=4,pady=15, padx=(0,12))
                 
     def save_results(self):     #Allows the user to save their initials to the highscore
         self.results_page.grid_forget()
-        self.save_page = Frame(window, width=490, height=490, bg="#f4732e")
+        self.save_page = Frame(window, width=490, height=490, bg="#f4732e")     #Lay out the background
         self.save_page.grid(row=0,column=0, padx=5, pady=5)
         for i in range(3):
-            self.save_page.grid_columnconfigure(i,weight=1)
+            self.save_page.grid_columnconfigure(i,weight=1)                 #Evenly space the columns and rows
         for i in range(4):
-            self.save_page.grid_rowconfigure(i,weight=1)
+            self.save_page.grid_rowconfigure(i,weight=1)                    #Fill the background so it doesn't stick tight to the widgets
         self.save_page.grid_propagate(False)
 
         Label(self.save_page, text="Enter Initials", font="Bahnschrift 45 bold", bg="#f4732e", fg="Black").grid(row=0,column=0,columnspan=3)
 
         self.box_1 = ttk.Entry(self.save_page, textvariable=init_1, font=("Arial 45"), width=2, validate="key")
         self.box_1.grid(row=1,column=0)
-        self.box_1['validatecommand'] = (self.box_1.register(one_char),'%P','%d')
+        self.box_1['validatecommand'] = (self.box_1.register(one_char),'%P','%d')           #Only lets the user enter approved characters (1 character alphanumeric)
         self.box_2 = ttk.Entry(self.save_page, textvariable=init_2, font=("Arial 45"), width=2, validate="key")
         self.box_2.grid(row=1,column=1)
-        self.box_2['validatecommand'] = (self.box_1.register(one_char),'%P','%d')
+        self.box_2['validatecommand'] = (self.box_1.register(one_char),'%P','%d')           #Only lets the user enter approved characters (1 character alphanumeric)
         self.box_3 = ttk.Entry(self.save_page, textvariable=init_3, font=("Arial 45"), width=2, validate="key")
         self.box_3.grid(row=1,column=2)
-        self.box_3['validatecommand'] = (self.box_3.register(one_char),'%P','%d')
+        self.box_3['validatecommand'] = (self.box_3.register(one_char),'%P','%d')           #Only lets the user enter approved characters (1 character alphanumeric)
 
         ttk.Button(self.save_page, text="Save", command=lambda:self.save(self.box_1.get(), self.box_2.get(), self.box_3.get()), style="big.TButton").grid(row=2,column=1) 
         ttk.Button(self.results_page, text="Main Menu", command=self.main_menu).grid(row=3,column=2,pady=15)
 
-    def an_option(self):    #Only allows the user to start if they have selected at least one operation
+    def an_option(self):    #Only allows the user to start if they have selected at least one operation (on the main menu)
         if self.add_var.get()==False and self.sub_var.get()==False and self.mult_var.get()==False and self.div_var.get()==False:
             self.Start_Button.config(state=DISABLED)
         else:
@@ -204,9 +206,9 @@ class main_window():
 
     def save(self,char1,char2,char3):        #Write to the file and take the user to the main menu
         name = char1 + char2 + char3
-        if char1 != "" and char2 != "" and char3 != "":
+        if char1 != "" and char2 != "" and char3 != "":     #Only lets them save if they've entered something in all 3 fields
             val = round(calc_score(),2)
-            with open("Highscores.txt", "r+") as highscore_file:
+            with open("Highscores.txt", "r+") as highscore_file:        #Opens the file
                 for line in highscore_file:
                     highscore_list.append(line)        
                 highscore_file.truncate(0)  #Wipes the file
@@ -216,12 +218,13 @@ class main_window():
                 l = str(val) + "," + name + "," + str(difficulty) + "," + str(self.add_var.get()) + "," + str(self.sub_var.get()) + "," + str(self.mult_var.get()) + "," + str(self.div_var.get()) + "\n"
                 highscore_list.append(l)
                 for i in highscore_list:
-                    highscore_file.write(i)
+                    highscore_file.write(i)     #Writes to the file
             self.save_page.grid_forget()
             self.main_menu()
+                            #Because I'm using with it automatically handles flushing and closing the file
         
             
-    def show_highscores(self):
+    def show_highscores(self):      #Allows the user to browse highscores that match the filters they apply on the right
         try:        #Clear the other menu if it exists
             self.menu_page.grid_forget()
         except AttributeError:  #Stops the error message being printed
@@ -275,39 +278,39 @@ class main_window():
         
     def next_question(self,event=None):  #Changes the question, writes the result, and clears the entry
         global question_number
-        if self.answer_box.get() != "":
+        if self.answer_box.get() != "":     #Only proceeds if they've entered something
             user_answer_list.append(int(self.answer_box.get()))
             self.answer_box.delete(0, 'end')
             question_number += 1
-            if question_number != len(correct_answer_list):
+            if question_number != len(correct_answer_list): #Show the next question
                 question_var.set(problem_list[question_number])
-            elif question_number == len(correct_answer_list):
+            elif question_number == len(correct_answer_list):   #If they've reached the end unbind the enter key, and move to the resultsx
                 window.unbind("<Return>")
                 self.results()
 
     def search_highscores(self, val=None):  #Iterates through the highscore file and then writes all the matching ones to the file 
         difficulty = str(self.highscore_difficulty_value.get())
+        x=[]
         if difficulty == "Difficulty": difficulty = "Medium"
+        self.highscore_output_box.tag_config("centered", justify=CENTER)
 
-        self.highscore_output_box.configure(state="normal")
+        self.highscore_output_box.configure(state="normal")     #Resets everything to go again
         self.highscore_output_box.delete(1.0, 'end')
         current_highscore_list.clear()
 
-        with open("Highscores.txt") as highscore_file:
+        with open("Highscores.txt") as highscore_file:      #Opens the file
             for line in highscore_file:
                 line = line.rstrip()
                 line = line.split(",")
                 if str(line[2]) == difficulty and str(line[3]) == str(self.highscore_add_var.get()) and str(line[4]) == str(self.highscore_sub_var.get()) and str(line[5]) == str(self.highscore_mult_var.get()) and str(line[6]) == str(self.highscore_div_var.get()):
-                    x=[]
-                    x.clear()
-                    x.append(line[0])
-                    y = ("             " + str(line[1]) + "\n")
+                    x.clear()                   #Messy, but it combines the first 2 items into a list and puts that list onto another list, which is later displayed. 
+                    x.append(line[0])           #Doing it this way allows me to sort the highscores with the names fixed
+                    y = (str(line[1]) + "\n")
                     x.append(y)
                     current_highscore_list.append(x)
-        current_highscore_list.sort(key= lambda x: x[0], reverse=True)    #Sorts the lists according to the first item of them                #Not lists tho ------------------------- Todo
+        current_highscore_list.sort(key= lambda x: x[0], reverse=True)    #Sorts the highscores
         for i in current_highscore_list:
-            self.highscore_output_box.insert("end", i[0])
-            self.highscore_output_box.insert("end", i[1])
+            self.highscore_output_box.insert("end", i[1],"centered")       #Writes it to the output box
 
         self.highscore_output_box.configure(state="disabled")
 
@@ -328,7 +331,7 @@ def one_char(in_string, action_type):    #Checks the the user only enters one al
             return False
     return True
 
-def calc_score():
+def calc_score():       #I made it a function so that I could change how I calculated the score easily. I was tossing it up between this method and another one.
     global score
     global duration
     return score/duration
@@ -339,20 +342,20 @@ def generate_problems(difficulty="Medium", add=True, sub=True, mult=True, div=Tr
     selected_functions.clear()
     problem_list.clear()
     correct_answer_list.clear()
-    if add: selected_functions.append("add")
+    if add: selected_functions.append("add")    #Only make questions for the operations the user selcted
     if sub: selected_functions.append("sub")
     if mult: selected_functions.append("mult")
     if div: selected_functions.append("div")
-    for i in range(NUM_QUESTIONS):
+    for i in range(NUM_QUESTIONS):      #Used a constant so I can easily change the number of questions
         num_1 = 0
         num_2 = 0
         current_operation = (rnd.choice(selected_functions))
-        if current_operation == "add":
-            if difficulty == "Easy":
-                num_1 = rnd.randint(1,9)
-                num_2 = rnd.randint(1,9)
-            elif difficulty == "Medium":
-                num_1 = rnd.randint(1,9)
+        if current_operation == "add":              #This is the best way I could figure out to do a matrix of results
+            if difficulty == "Easy":                #I've detailed what the difficulties are in a more readable way in the explanatory document
+                num_1 = rnd.randint(1,9)            #I'm not commenting it all because it's similar
+                num_2 = rnd.randint(1,9)            #Depending on the difficulty it determines 1 or 2 numbers
+            elif difficulty == "Medium":            #Then it combines them into a question as a string, and puts that on a list
+                num_1 = rnd.randint(1,9)            #And writes the anwer to another list
                 num_2 = rnd.randint(10,99)
             elif difficulty == "Hard":
                 num_1 = rnd.randint(1,9) * int(rnd.choice([2,5,10]))
@@ -411,12 +414,12 @@ def generate_problems(difficulty="Medium", add=True, sub=True, mult=True, div=Tr
             problem_list.append(full_problem)
             correct_answer_list.append(int((num_1*num_2)/num_1))
 
-#Accuracy/Time
+
             
 window = Tk()
 
-current_highscore_list=[]
-highscore_list=[]
+current_highscore_list=[]           #That's a lot of variables
+highscore_list=[]                   #I probably could've used fewer variables, but that would've made the code longer and more convoluted
 problem_list=[]
 user_answer_list=[]
 correct_answer_list=[]
@@ -429,9 +432,12 @@ question_number = 0
 start_time = 0
 duration = 0
 score = 0
+NUM_QUESTIONS=100
+
 window.geometry("500x500")
 window.title("George's 100 Basic Facts")
+
+#Putting it down here makes the code up there easier to read without a massive block of text or a line going way off to the right
 instruction_text = "Welcome to George's 100 Basic Facts. \n On the main menu you can select what operations (addition, subtraction, multiplication, division) you want to practice, and what difficulty you want the questions to be. \n Once you're ready you can click start, and the first question will come up, and the timer will start. \n Put your answer in the box, and press enter to move to the next question. After 100 questions you can see your results, and save your resulta. \n The points are determined by the number of correct answers divided by how long it took. \n That's all you need to know, enjoy."
-NUM_QUESTIONS=100
 
 main_window()
